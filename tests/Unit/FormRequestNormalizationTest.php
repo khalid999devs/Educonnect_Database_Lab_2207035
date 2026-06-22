@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Resources\StoreResourceRequest;
 use App\Http\Requests\Students\StudentOnboardingRequest;
@@ -10,6 +11,17 @@ use Tests\TestCase;
 
 class FormRequestNormalizationTest extends TestCase
 {
+    public function test_login_request_normalizes_email(): void
+    {
+        $request = LoginRequest::create('/', 'POST', [
+            'email' => 'STUDENT@EXAMPLE.COM',
+        ]);
+
+        $this->prepare($request);
+
+        $this->assertSame('student@example.com', $request->input('email'));
+    }
+
     public function test_register_request_normalizes_email_and_role(): void
     {
         $request = RegisterRequest::create('/', 'POST', [

@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\SavedTemplateController;
 use App\Http\Controllers\Api\StudentOnboardingController;
 use App\Http\Controllers\Api\TemplateController;
 use App\Http\Controllers\Api\ToolController;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +26,11 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
     Route::prefix('auth')
         ->name('auth.')
-        ->middleware(StartSession::class)
+        ->middleware([
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+        ])
         ->controller(AuthController::class)
         ->group(function () {
             Route::post('/register', 'register')->name('register');

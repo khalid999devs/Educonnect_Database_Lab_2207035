@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "educonnect/api",
     "type": "project",
-    "description": "Laravel REST API backend for the EduConnect database lab MVP.",
+    "description": "Laravel and Oracle application for the Educonnect academic workspace.",
     "keywords": ["laravel", "oracle", "rest-api", "educonnect"],
     "license": "MIT",
     "require": {

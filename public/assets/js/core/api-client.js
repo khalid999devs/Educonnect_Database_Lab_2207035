@@ -35,7 +35,7 @@ export class ApiClient {
         try {
             response = await fetch(`${this.baseUrl}/${path.replace(/^\//, '')}`, requestOptions);
         } catch {
-            throw new ApiError('Unable to reach EduConnect. Check your connection and try again.');
+            throw new ApiError('Unable to reach Educonnect. Check your connection and try again.');
         }
 
         const payload = await this.parseResponse(response);

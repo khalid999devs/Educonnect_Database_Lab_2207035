@@ -1,6 +1,6 @@
 @extends('layouts.guest')
 
-@section('title', 'Sign in | Educonnect')
+@section('title', 'Create account | Educonnect')
 
 @section('content')
     <div class="auth-shell">
@@ -13,22 +13,22 @@
             <div class="auth-visual__content">
                 <x-brand.lockup class="brand-lockup--inverse" />
                 <div>
-                    <p class="auth-visual__eyebrow">Study with direction</p>
-                    <h1 class="auth-visual__title">Make room for focused work.</h1>
+                    <p class="auth-visual__eyebrow">Built for focused study</p>
+                    <h1 class="auth-visual__title">Start with a clear workspace.</h1>
                 </div>
             </div>
         </section>
 
-        <section class="auth-panel" aria-labelledby="login-heading">
+        <section class="auth-panel" aria-labelledby="register-heading">
             <div class="auth-panel__mobile-brand">
                 <x-brand.lockup />
             </div>
 
             <div class="auth-form-wrap">
-                <header class="auth-heading">
-                    <p class="auth-heading__eyebrow">Welcome back</p>
-                    <h2 id="login-heading">Sign in to your account</h2>
-                    <p>Continue to your academic workspace.</p>
+                <header class="auth-heading auth-heading--compact">
+                    <p class="auth-heading__eyebrow">Get started</p>
+                    <h2 id="register-heading">Create your account</h2>
+                    <p>Use your university email to begin.</p>
                 </header>
 
                 <div class="auth-feedback" data-auth-feedback hidden></div>
@@ -36,10 +36,21 @@
                 <form
                     class="auth-form"
                     method="post"
-                    action="{{ url('/api/v1/auth/login') }}"
-                    data-auth-form="login"
+                    action="{{ url('/api/v1/auth/register') }}"
+                    data-auth-form="register"
                     data-success-url="{{ route('workspace') }}"
                 >
+                    <input type="hidden" name="role" value="STUDENT">
+
+                    <x-ui.input
+                        name="name"
+                        label="Full name"
+                        autocomplete="name"
+                        placeholder="Your full name"
+                        required
+                        autofocus
+                    />
+
                     <x-ui.input
                         name="email"
                         label="Email address"
@@ -48,26 +59,37 @@
                         inputmode="email"
                         placeholder="you@university.edu"
                         required
-                        autofocus
                     />
 
                     <x-ui.input
                         name="password"
                         label="Password"
                         type="password"
-                        autocomplete="current-password"
-                        placeholder="Enter your password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        hint="Use at least 6 characters."
+                        placeholder="Create a password"
+                        required
+                    />
+
+                    <x-ui.input
+                        name="password_confirmation"
+                        label="Confirm password"
+                        type="password"
+                        autocomplete="new-password"
+                        minlength="6"
+                        placeholder="Repeat your password"
                         required
                     />
 
                     <x-ui.button type="submit" block data-submit-button>
-                        Sign in
+                        Create account
                     </x-ui.button>
                 </form>
 
                 <p class="auth-switch">
-                    New here?
-                    <a href="{{ route('register') }}">Create an account</a>
+                    Already have an account?
+                    <a href="{{ route('login') }}">Sign in</a>
                 </p>
             </div>
 

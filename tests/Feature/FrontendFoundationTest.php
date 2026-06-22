@@ -16,7 +16,7 @@ class FrontendFoundationTest extends TestCase
     {
         $this->get('/login')
             ->assertOk()
-            ->assertSee('Sign in to EduConnect')
+            ->assertSee('Sign in to your account')
             ->assertSee('name="email"', false)
             ->assertSee('name="password"', false)
             ->assertSee('assets/css/tokens.css', false)
@@ -41,6 +41,7 @@ class FrontendFoundationTest extends TestCase
         $this->assertFileExists(public_path('assets/css/tokens.css'));
         $this->assertFileExists(public_path('assets/css/auth.css'));
         $this->assertFileExists(public_path('assets/js/core/api-client.js'));
+        $this->assertFileExists(public_path('assets/js/features/auth.js'));
         $this->assertFileExists(public_path('assets/images/auth-workspace.png'));
     }
 }

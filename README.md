@@ -1,8 +1,8 @@
-# EduConnect API
+# Educonnect
 
 **Personalized Academic Resource and Research Management System**
 
-EduConnect is a Database Lab MVP for organizing student academic profiles, documents, learning resources, templates, tools, and research materials. It provides a Laravel REST API connected to Oracle Database and keeps its raw Oracle SQL and PL/SQL implementation visible for lab evaluation.
+Educonnect organizes student academic profiles, documents, learning resources, templates, tools, and research materials. It combines a lightweight Laravel Blade interface with a REST API connected to Oracle Database while keeping its raw Oracle SQL and PL/SQL implementation visible for evaluation.
 
 ## Project Scope
 
@@ -11,6 +11,7 @@ The current repository contains the Oracle-backed API and a lightweight Laravel 
 Implemented features:
 
 - User registration and session login
+- Browser-based sign-up, sign-in, protected workspace, and sign-out flow
 - Student onboarding and academic preferences
 - Academic document metadata and simulated extracted facts
 - Resource, tool, and template catalogues
@@ -99,6 +100,8 @@ All application endpoints use the `/api/v1` prefix.
 | Recommendations     | `/recommendations/student/{id}` |
 
 The API uses consistent success, validation, authentication, not-found, conflict, and Oracle business-error responses.
+
+The Blade demo interface starts at `/login`, supports student registration at `/register`, and protects the signed-in workspace at `/app` with Laravel sessions.
 
 ## Local Setup
 

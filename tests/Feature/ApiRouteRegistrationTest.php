@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Route as IlluminateRoute;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
@@ -26,12 +29,17 @@ class ApiRouteRegistrationTest extends TestCase
 
     public function test_authenticated_user_routes_have_session_and_auth_middleware(): void
     {
-        foreach (['api.v1.auth.me', 'api.v1.auth.logout'] as $routeName) {
+        foreach (['api.v1.auth.register', 'api.v1.auth.login', 'api.v1.auth.me', 'api.v1.auth.logout'] as $routeName) {
             $route = Route::getRoutes()->getByName($routeName);
 
             $this->assertNotNull($route);
-            $this->assertContains('Illuminate\\Session\\Middleware\\StartSession', $route->gatherMiddleware());
-            $this->assertContains('auth', $route->gatherMiddleware());
+            $this->assertContains(EncryptCookies::class, $route->gatherMiddleware());
+            $this->assertContains(AddQueuedCookiesToResponse::class, $route->gatherMiddleware());
+            $this->assertContains(StartSession::class, $route->gatherMiddleware());
+        }
+
+        foreach (['api.v1.auth.me', 'api.v1.auth.logout'] as $routeName) {
+            $this->assertContains('auth', Route::getRoutes()->getByName($routeName)->gatherMiddleware());
         }
     }
 

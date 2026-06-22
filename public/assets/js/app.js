@@ -1,4 +1,5 @@
 import { apiClient } from './core/api-client.js';
+import { setupAuthentication } from './features/auth.js';
 
 function setupSidebar() {
     const shell = document.querySelector('[data-app-shell]');
@@ -38,9 +39,10 @@ function setupDismissibleAlerts() {
 function initialize() {
     setupSidebar();
     setupDismissibleAlerts();
+    setupAuthentication();
 }
 
-window.EduConnect = Object.freeze({ api: apiClient });
+window.Educonnect = Object.freeze({ api: apiClient });
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initialize);

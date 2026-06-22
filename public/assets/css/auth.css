@@ -18,7 +18,7 @@
 .auth-visual::after {
     position: absolute;
     inset: 0;
-    background: rgb(12 35 29 / 0.52);
+    background: rgb(12 35 29 / 0.46);
     content: "";
 }
 
@@ -44,7 +44,6 @@
 .auth-visual__eyebrow,
 .auth-heading__eyebrow {
     margin-bottom: var(--space-3);
-    color: var(--color-accent);
     font-size: var(--text-xs);
     font-weight: 800;
     text-transform: uppercase;
@@ -54,11 +53,15 @@
     color: #f6c4a7;
 }
 
+.auth-heading__eyebrow {
+    color: var(--color-primary);
+}
+
 .auth-visual__title {
-    max-width: 9ch;
+    max-width: 10ch;
     margin-bottom: 0;
     color: #fff;
-    font-size: clamp(2.5rem, 5vw, 4.75rem);
+    font-size: 3.5rem;
 }
 
 .auth-panel {
@@ -68,7 +71,7 @@
     flex-direction: column;
     justify-content: center;
     padding: var(--space-10) clamp(2rem, 8vw, 7rem);
-    background: var(--color-surface);
+    background: #fbfcfb;
 }
 
 .auth-panel__mobile-brand {
@@ -77,7 +80,7 @@
 
 .auth-form-wrap {
     width: 100%;
-    max-width: 27rem;
+    max-width: 25rem;
     margin: auto;
 }
 
@@ -85,9 +88,13 @@
     margin-bottom: var(--space-8);
 }
 
+.auth-heading--compact {
+    margin-bottom: var(--space-6);
+}
+
 .auth-heading h2 {
     margin-bottom: var(--space-3);
-    font-size: var(--text-3xl);
+    font-size: var(--text-2xl);
 }
 
 .auth-heading p:last-child {
@@ -107,10 +114,15 @@
     margin-top: var(--space-2);
 }
 
-.auth-panel__footer {
-    margin: var(--space-10) auto 0;
-    color: var(--color-ink-subtle);
-    font-size: var(--text-xs);
+.auth-switch {
+    margin: var(--space-6) 0 0;
+    color: var(--color-ink-muted);
+    font-size: var(--text-sm);
+    text-align: center;
+}
+
+.auth-switch a {
+    font-weight: 700;
 }
 
 @media (max-width: 56rem) {
@@ -119,7 +131,7 @@
     }
 
     .auth-visual__title {
-        font-size: var(--text-3xl);
+        font-size: 2.75rem;
     }
 }
 
@@ -147,7 +159,4 @@
         margin: 0 auto;
     }
 
-    .auth-heading h2 {
-        font-size: var(--text-2xl);
-    }
 }
