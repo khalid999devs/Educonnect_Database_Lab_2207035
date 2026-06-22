@@ -53,6 +53,7 @@ class ApiRouteRegistrationTest extends TestCase
     {
         return [
             'GET api/v1/health/database' => 'App\\Http\\Controllers\\Api\\DatabaseHealthController',
+            'GET api/v1/reference-data' => 'App\\Http\\Controllers\\Api\\ReferenceDataController',
             'POST api/v1/auth/register' => 'App\\Http\\Controllers\\Api\\AuthController@register',
             'POST api/v1/auth/login' => 'App\\Http\\Controllers\\Api\\AuthController@login',
             'GET api/v1/auth/me' => 'App\\Http\\Controllers\\Api\\AuthController@me',

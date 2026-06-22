@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Templates\StoreTemplateRequest;
+use App\Http\Requests\Templates\TemplateIndexRequest;
 use App\Http\Requests\Templates\UpdateTemplateRequest;
 use App\Models\Template;
 use App\Support\ApiResponse;
@@ -10,12 +11,22 @@ use Illuminate\Http\JsonResponse;
 
 class TemplateController extends ApiController
 {
-    public function index(): JsonResponse
+    public function index(TemplateIndexRequest $request): JsonResponse
     {
+        $filters = $request->validated();
+        $search = strtolower($filters['search'] ?? '');
+
         $templates = Template::query()
             ->with(['category', 'university', 'academicField', 'creator'])
+            ->when($filters['template_category_id'] ?? null, fn ($query, $categoryId) => $query->where('template_category_id', $categoryId))
+            ->when($filters['university_id'] ?? null, fn ($query, $universityId) => $query->where('university_id', $universityId))
+            ->when($filters['academic_field_id'] ?? null, fn ($query, $fieldId) => $query->where('academic_field_id', $fieldId))
+            ->when(array_key_exists('is_paid', $filters), fn ($query) => $query->where('is_paid', (int) $filters['is_paid']))
+            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
+            ->when($search !== '', fn ($query) => $query->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"]))
             ->orderByDesc('created_at')
-            ->paginate(15);
+            ->paginate($request->perPage())
+            ->withQueryString();
 
         return ApiResponse::success('Templates retrieved', $templates);
     }

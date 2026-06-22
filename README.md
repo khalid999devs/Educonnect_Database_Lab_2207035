@@ -81,6 +81,7 @@ All application endpoints use the `/api/v1` prefix.
 | Area                | Route group                     |
 | ------------------- | ------------------------------- |
 | Database health     | `/health/database`              |
+| Reference options   | `/reference-data`               |
 | Authentication      | `/auth/*`                       |
 | Student profiles    | `/students/*`                   |
 | Academic documents  | `/documents/*`                  |

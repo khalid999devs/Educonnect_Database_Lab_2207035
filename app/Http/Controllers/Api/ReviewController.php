@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Reviews\ReviewIndexRequest;
 use App\Http\Requests\Reviews\StoreReviewRequest;
 use App\Http\Requests\Reviews\UpdateReviewRequest;
 use App\Models\Review;
@@ -10,12 +11,18 @@ use Illuminate\Http\JsonResponse;
 
 class ReviewController extends ApiController
 {
-    public function index(): JsonResponse
+    public function index(ReviewIndexRequest $request): JsonResponse
     {
+        $filters = $request->validated();
+
         $reviews = Review::query()
             ->with(['student.user', 'reviewable'])
+            ->when($filters['student_id'] ?? null, fn ($query, $studentId) => $query->where('student_id', $studentId))
+            ->when($filters['reviewable_type'] ?? null, fn ($query, $type) => $query->where('reviewable_type', $type))
+            ->when($filters['reviewable_id'] ?? null, fn ($query, $reviewableId) => $query->where('reviewable_id', $reviewableId))
             ->orderByDesc('created_at')
-            ->paginate(15);
+            ->paginate($request->perPage())
+            ->withQueryString();
 
         return ApiResponse::success('Reviews retrieved', $reviews);
     }

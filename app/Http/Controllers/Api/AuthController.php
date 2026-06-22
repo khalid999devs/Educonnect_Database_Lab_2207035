@@ -35,7 +35,7 @@ class AuthController extends ApiController
             $request->session()->regenerate();
         }
 
-        return ApiResponse::success('Login successful', $request->user());
+        return ApiResponse::success('Login successful', $this->authenticatedUser($request));
     }
 
     public function me(Request $request): JsonResponse
@@ -44,7 +44,7 @@ class AuthController extends ApiController
             return ApiResponse::error('Unauthenticated', null, 401);
         }
 
-        return ApiResponse::success('Authenticated user retrieved', $request->user());
+        return ApiResponse::success('Authenticated user retrieved', $this->authenticatedUser($request));
     }
 
     public function logout(Request $request): JsonResponse
@@ -57,5 +57,17 @@ class AuthController extends ApiController
         }
 
         return ApiResponse::success('Logout successful');
+    }
+
+    private function authenticatedUser(Request $request): User
+    {
+        /** @var User $user */
+        $user = $request->user();
+
+        return $user->load([
+            'student.university',
+            'student.academicField',
+            'student.preferences',
+        ]);
     }
 }

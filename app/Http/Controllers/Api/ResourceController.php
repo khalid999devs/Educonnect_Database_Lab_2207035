@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Resources\ResourceIndexRequest;
 use App\Http\Requests\Resources\StoreResourceRequest;
 use App\Http\Requests\Resources\UpdateResourceRequest;
 use App\Models\Resource;
@@ -10,12 +11,22 @@ use Illuminate\Http\JsonResponse;
 
 class ResourceController extends ApiController
 {
-    public function index(): JsonResponse
+    public function index(ResourceIndexRequest $request): JsonResponse
     {
+        $filters = $request->validated();
+        $search = strtolower($filters['search'] ?? '');
+
         $resources = Resource::query()
             ->with(['category', 'academicField', 'task', 'creator'])
+            ->when($filters['resource_category_id'] ?? null, fn ($query, $categoryId) => $query->where('resource_category_id', $categoryId))
+            ->when($filters['academic_field_id'] ?? null, fn ($query, $fieldId) => $query->where('academic_field_id', $fieldId))
+            ->when($filters['task_id'] ?? null, fn ($query, $taskId) => $query->where('task_id', $taskId))
+            ->when($filters['difficulty_level'] ?? null, fn ($query, $level) => $query->where('difficulty_level', $level))
+            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
+            ->when($search !== '', fn ($query) => $query->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"]))
             ->orderByDesc('created_at')
-            ->paginate(15);
+            ->paginate($request->perPage())
+            ->withQueryString();
 
         return ApiResponse::success('Resources retrieved', $resources);
     }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DatabaseHealthController;
 use App\Http\Controllers\Api\RecommendationController;
+use App\Http\Controllers\Api\ReferenceDataController;
 use App\Http\Controllers\Api\ResearchTopicController;
 use App\Http\Controllers\Api\ResourceController;
 use App\Http\Controllers\Api\ReviewController;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::get('/health/database', DatabaseHealthController::class)->name('health.database');
+    Route::get('/reference-data', ReferenceDataController::class)->name('reference-data');
 
     Route::prefix('auth')
         ->name('auth.')

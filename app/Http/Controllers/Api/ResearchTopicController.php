@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Requests\Research\ResearchTopicIndexRequest;
 use App\Http\Requests\Research\StoreResearchCollectionRequest;
 use App\Http\Requests\Research\StoreResearchTopicRequest;
 use App\Http\Requests\Research\UpdateResearchTopicRequest;
@@ -12,13 +13,21 @@ use Illuminate\Http\JsonResponse;
 
 class ResearchTopicController extends ApiController
 {
-    public function index(): JsonResponse
+    public function index(ResearchTopicIndexRequest $request): JsonResponse
     {
+        $filters = $request->validated();
+        $search = strtolower($filters['search'] ?? '');
+
         $topics = ResearchTopic::query()
             ->with(['student.user', 'academicField'])
             ->withCount('collections')
+            ->when($filters['student_id'] ?? null, fn ($query, $studentId) => $query->where('student_id', $studentId))
+            ->when($filters['academic_field_id'] ?? null, fn ($query, $fieldId) => $query->where('academic_field_id', $fieldId))
+            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
+            ->when($search !== '', fn ($query) => $query->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"]))
             ->orderByDesc('created_at')
-            ->paginate(15);
+            ->paginate($request->perPage())
+            ->withQueryString();
 
         return ApiResponse::success('Research topics retrieved', $topics);
     }

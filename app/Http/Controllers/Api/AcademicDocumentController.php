@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Documents\AddExtractedDataRequest;
+use App\Http\Requests\Documents\DocumentIndexRequest;
 use App\Http\Requests\Documents\StoreAcademicDocumentRequest;
 use App\Http\Requests\Documents\UpdateAcademicDocumentRequest;
 use App\Models\AcademicDocument;
@@ -12,12 +13,20 @@ use Illuminate\Http\JsonResponse;
 
 class AcademicDocumentController extends ApiController
 {
-    public function index(): JsonResponse
+    public function index(DocumentIndexRequest $request): JsonResponse
     {
+        $filters = $request->validated();
+        $search = strtolower($filters['search'] ?? '');
+
         $documents = AcademicDocument::query()
             ->with(['student.user'])
+            ->when($filters['student_id'] ?? null, fn ($query, $studentId) => $query->where('student_id', $studentId))
+            ->when($filters['document_type'] ?? null, fn ($query, $type) => $query->where('document_type', $type))
+            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
+            ->when($search !== '', fn ($query) => $query->whereRaw('LOWER(title) LIKE ?', ["%{$search}%"]))
             ->orderByDesc('created_at')
-            ->paginate(15);
+            ->paginate($request->perPage())
+            ->withQueryString();
 
         return ApiResponse::success('Academic documents retrieved', $documents);
     }
