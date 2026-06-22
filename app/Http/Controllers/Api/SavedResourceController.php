@@ -11,18 +11,18 @@ class SavedResourceController extends ApiController
 {
     public function store(
         StudentResourceActionRequest $request,
-        int $resourceId,
+        int $id,
         OracleProcedureService $oracleProcedures,
     ): JsonResponse {
         $studentId = (int) $request->validated('student_id');
 
-        return $this->runOracleOperation(function () use ($studentId, $resourceId, $oracleProcedures): SavedResource {
-            $oracleProcedures->saveResource($studentId, $resourceId);
+        return $this->runOracleOperation(function () use ($studentId, $id, $oracleProcedures): SavedResource {
+            $oracleProcedures->saveResource($studentId, $id);
 
             return SavedResource::query()
                 ->with('resource')
                 ->where('student_id', $studentId)
-                ->where('resource_id', $resourceId)
+                ->where('resource_id', $id)
                 ->firstOrFail();
         }, 'Resource saved successfully', 201);
     }

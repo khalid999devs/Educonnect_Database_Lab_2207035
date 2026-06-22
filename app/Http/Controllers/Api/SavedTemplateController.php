@@ -12,36 +12,36 @@ class SavedTemplateController extends ApiController
 {
     public function store(
         StudentTemplateActionRequest $request,
-        int $templateId,
+        int $id,
         OracleProcedureService $oracleProcedures,
     ): JsonResponse {
         $studentId = (int) $request->validated('student_id');
 
-        return $this->runOracleOperation(function () use ($studentId, $templateId, $oracleProcedures): SavedTemplate {
-            $oracleProcedures->saveTemplate($studentId, $templateId);
+        return $this->runOracleOperation(function () use ($studentId, $id, $oracleProcedures): SavedTemplate {
+            $oracleProcedures->saveTemplate($studentId, $id);
 
             return SavedTemplate::query()
                 ->with('template')
                 ->where('student_id', $studentId)
-                ->where('template_id', $templateId)
+                ->where('template_id', $id)
                 ->firstOrFail();
         }, 'Template saved successfully', 201);
     }
 
     public function purchase(
         StudentTemplateActionRequest $request,
-        int $templateId,
+        int $id,
         OracleProcedureService $oracleProcedures,
     ): JsonResponse {
         $studentId = (int) $request->validated('student_id');
 
-        return $this->runOracleOperation(function () use ($studentId, $templateId, $oracleProcedures): TemplatePurchase {
-            $oracleProcedures->purchaseTemplate($studentId, $templateId);
+        return $this->runOracleOperation(function () use ($studentId, $id, $oracleProcedures): TemplatePurchase {
+            $oracleProcedures->purchaseTemplate($studentId, $id);
 
             return TemplatePurchase::query()
                 ->with('template')
                 ->where('student_id', $studentId)
-                ->where('template_id', $templateId)
+                ->where('template_id', $id)
                 ->where('payment_status', 'PAID')
                 ->orderByDesc('id')
                 ->firstOrFail();

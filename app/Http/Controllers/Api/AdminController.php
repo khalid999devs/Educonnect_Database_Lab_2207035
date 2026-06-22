@@ -12,31 +12,31 @@ class AdminController extends ApiController
 {
     public function approveResource(
         ApprovalRequest $request,
-        int $resourceId,
+        int $id,
         OracleProcedureService $oracleProcedures,
     ): JsonResponse {
-        return $this->runOracleOperation(function () use ($request, $resourceId, $oracleProcedures): Resource {
+        return $this->runOracleOperation(function () use ($request, $id, $oracleProcedures): Resource {
             $oracleProcedures->approveResource(
-                $resourceId,
+                $id,
                 (int) $request->validated('admin_user_id'),
             );
 
-            return Resource::query()->findOrFail($resourceId);
+            return Resource::query()->findOrFail($id);
         }, 'Resource approved successfully');
     }
 
     public function approveTemplate(
         ApprovalRequest $request,
-        int $templateId,
+        int $id,
         OracleProcedureService $oracleProcedures,
     ): JsonResponse {
-        return $this->runOracleOperation(function () use ($request, $templateId, $oracleProcedures): Template {
+        return $this->runOracleOperation(function () use ($request, $id, $oracleProcedures): Template {
             $oracleProcedures->approveTemplate(
-                $templateId,
+                $id,
                 (int) $request->validated('admin_user_id'),
             );
 
-            return Template::query()->findOrFail($templateId);
+            return Template::query()->findOrFail($id);
         }, 'Template approved successfully');
     }
 }

@@ -11,13 +11,13 @@ class RecommendationController extends ApiController
 {
     public function index(
         RecommendationRequest $request,
-        int $studentId,
+        int $id,
         RecommendationService $recommendations,
     ): JsonResponse {
         return ApiResponse::success(
             'Student recommendations retrieved',
             $recommendations->getForStudent(
-                $studentId,
+                $id,
                 (int) $request->validated('limit', 10),
             ),
         );

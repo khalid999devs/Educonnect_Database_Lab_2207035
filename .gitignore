@@ -29,5 +29,4 @@ Wallet_*
 *.sso
 *.p12
 *.ora
-docs/*
-./docs
+docs/

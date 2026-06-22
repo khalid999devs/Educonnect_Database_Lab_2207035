@@ -4,23 +4,28 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Support\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Throwable;
+use Yajra\Oci8\Oci8Connection;
 
 class DatabaseHealthController extends Controller
 {
-    public function __invoke()
+    public function __invoke(): JsonResponse
     {
+        $tnsAdmin = (string) config('oracle.tns_admin');
+
         $status = [
             'default_connection' => config('database.default'),
             'oracle_connection_configured' => array_key_exists('oracle', config('database.connections')),
-            'laravel_oci8_installed' => class_exists('Yajra\Oci8\Oci8Connection'),
+            'laravel_oci8_installed' => class_exists(Oci8Connection::class),
             'oci8_extension_loaded' => extension_loaded('oci8'),
             'tns_alias_configured' => filled(config('database.connections.oracle.tns')),
             'oracle_username_configured' => filled(config('database.connections.oracle.username')),
             'oracle_password_configured' => filled(config('database.connections.oracle.password')),
-            'tns_admin_configured' => filled(env('TNS_ADMIN')),
-            'wallet_tnsnames_present' => file_exists(rtrim((string) env('TNS_ADMIN'), '/').'/tnsnames.ora'),
+            'tns_admin_configured' => filled($tnsAdmin),
+            'wallet_tnsnames_present' => filled($tnsAdmin)
+                && file_exists(rtrim($tnsAdmin, '/').'/tnsnames.ora'),
         ];
 
         if (! $status['oci8_extension_loaded']) {
@@ -51,9 +56,11 @@ class DatabaseHealthController extends Controller
                 'database_time' => $result[0]->sysdate ?? $result[0]->SYSDATE ?? null,
             ]);
         } catch (Throwable $exception) {
+            report($exception);
+
             return ApiResponse::error('Oracle database connection is not ready', [
                 ...$status,
-                'detail' => $exception->getMessage(),
+                'detail' => 'Oracle connectivity check failed.',
             ], 503);
         }
     }

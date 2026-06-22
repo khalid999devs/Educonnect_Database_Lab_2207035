@@ -8,11 +8,11 @@ use Illuminate\Http\JsonResponse;
 
 class DashboardController extends ApiController
 {
-    public function show(int $studentId, DashboardService $dashboard): JsonResponse
+    public function show(int $id, DashboardService $dashboard): JsonResponse
     {
         return ApiResponse::success(
             'Student dashboard retrieved',
-            $dashboard->getForStudent($studentId),
+            $dashboard->getForStudent($id),
         );
     }
 }

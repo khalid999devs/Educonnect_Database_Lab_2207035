@@ -10,6 +10,15 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public function register(): void
+    {
+        $tnsAdmin = (string) config('oracle.tns_admin');
+
+        if ($tnsAdmin !== '') {
+            putenv("TNS_ADMIN={$tnsAdmin}");
+        }
+    }
+
     public function boot(): void
     {
         Relation::enforceMorphMap([

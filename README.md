@@ -1,180 +1,67 @@
 # EduConnect API
 
-Personalized Academic Resource and Research Management System.
+**Personalized Academic Resource and Research Management System**
 
-EduConnect is a Database Lab MVP backend for helping students manage academic profiles, resources, templates, documents, research topics, and personalized recommendations. This repository currently focuses only on the Laravel REST API and Oracle Database layer.
+EduConnect is a Database Lab MVP for organizing student academic profiles, documents, learning resources, templates, tools, and research materials. It provides a Laravel REST API connected to Oracle Database and keeps its raw Oracle SQL and PL/SQL implementation visible for lab evaluation.
 
-## Current Scope
+## Project Scope
 
-- Laravel REST API backend
-- Oracle Database connection through Laravel-OCI8
-- Raw Oracle SQL and PL/SQL scripts for lab evaluation
-- Postman/Insomnia-testable API endpoints
-- Clean backend structure prepared for a future Next.js frontend
+The current repository contains the backend and database layer only.
 
-Not included in the current lab phase:
+Implemented features:
 
-- Next.js frontend
-- Real AI extraction
-- Real payment gateway
-- Mobile app features
-- Real-time chat or mentor booking
+- User registration and session login
+- Student onboarding and academic preferences
+- Academic document metadata and simulated extracted facts
+- Resource, tool, and template catalogues
+- Saved resources and templates
+- Simulated paid-template purchases
+- Research topics and collection items
+- Reviews and automatic aggregate ratings
+- Student dashboard and personalized recommendations
+- Administrator approval and audit records
+- Oracle views, functions, procedures, triggers, and cursor reports
 
-## Tech Stack
+## Technology
 
 - PHP 8.3+
 - Laravel 13
-- Oracle Instant Client
-- PHP OCI8 extension
-- `yajra/laravel-oci8`
-- Oracle Autonomous Database
+- Oracle Autonomous Database 19c
+- Oracle Instant Client and PHP OCI8
+- Laravel-OCI8
 - Raw Oracle SQL and PL/SQL
-
-## Planned Features
-
-- Student registration and login
-- Student academic onboarding
-- Academic document metadata storage
-- Simulated extracted document data
-- Academic resources and tools
-- Template marketplace records
-- Saved resources and templates
-- Simulated template purchases
-- Research topics and collections
-- Reviews and ratings
-- Dashboard and recommendation endpoints
-- Admin approval flow
-- Oracle views, functions, procedures, triggers, and cursor reports
+- PHPUnit and Laravel Pint
 
 ## Project Structure
 
 ```text
-app/
-  Http/Controllers/Api/
-  Support/
-config/
-  oracle.php
-database/
-  oracle/
-docs/
-routes/
-  api.php
+app/Http/Controllers/Api/   API controllers
+app/Http/Requests/          Request validation
+app/Models/                 Oracle models and relationships
+app/Services/               Procedures, dashboard, and recommendations
+app/Support/                JSON response formatting
+config/oracle.php           Oracle connection configuration
+database/oracle/            Raw SQL, PL/SQL, seed, and test scripts
+docs/                       Detailed project documentation
+routes/api.php              Versioned REST routes
+tests/                      Unit and feature tests
 ```
 
-Raw database scripts must live in `database/oracle`. Laravel migrations are not the main database implementation for this lab.
+Laravel migrations are not the main database implementation. The authoritative database implementation is in `database/oracle`.
 
-## Oracle Wallet Rule
+## Database Components
 
-Do not put Oracle wallet files inside this repository.
+The Oracle schema includes:
 
-Use an external wallet path such as:
+- 21 tables and 9 supporting indexes
+- 5 reporting views
+- 5 PL/SQL functions
+- 6 transactional procedures
+- 5 triggers
+- 4 cursor-report procedures
+- 21 SQL verification sections
 
-```text
-/Users/khalid999devs/oracle/wallets/educonnect
-```
-
-The repository only stores the placeholder `TNS_ADMIN` variable in `.env.example`.
-
-## Environment Setup
-
-Copy the example environment file:
-
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-Set these local values in `.env`:
-
-```env
-APP_NAME=EduConnect
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://localhost
-
-DB_CONNECTION=oracle
-DB_TNS=educonnectdb_low
-DB_USERNAME=educonnect
-DB_PASSWORD=your_local_database_password
-DB_CHARSET=AL32UTF8
-TNS_ADMIN=/absolute/path/outside/repository/oracle/wallets/educonnect
-
-SESSION_DRIVER=file
-QUEUE_CONNECTION=sync
-CACHE_STORE=file
-```
-
-Never commit `.env`, Oracle wallet files, passwords, keys, or cloud credentials.
-
-## Install Dependencies
-
-```bash
-composer install
-```
-
-Required local Oracle tools:
-
-- Oracle Instant Client
-- Oracle SQL*Plus, optional but useful
-- PHP OCI8 extension
-
-Verify OCI8:
-
-```bash
-php --ri oci8
-composer check-platform-reqs
-```
-
-## Run The API
-
-```bash
-php artisan serve
-```
-
-Health check:
-
-```text
-http://127.0.0.1:8000/api/v1/health/database
-```
-
-If port `8000` is already busy, run:
-
-```bash
-php artisan serve --host=127.0.0.1 --port=8001
-```
-
-Expected response:
-
-```json
-{
-  "success": true,
-  "message": "Oracle database connection is healthy",
-  "data": {
-    "default_connection": "oracle",
-    "oracle_connection_configured": true,
-    "laravel_oci8_installed": true,
-    "oci8_extension_loaded": true,
-    "tns_alias_configured": true,
-    "oracle_username_configured": true,
-    "oracle_password_configured": true,
-    "tns_admin_configured": true,
-    "wallet_tnsnames_present": true
-  }
-}
-```
-
-## Test Commands
-
-```bash
-php artisan test
-php artisan route:list --path=api/v1
-composer validate --strict
-composer check-platform-reqs
-```
-
-## Database Script Order
-
-The Oracle scripts will be created and executed in this order:
+Run the scripts in this order:
 
 ```text
 01_create_tables.sql
@@ -187,14 +74,84 @@ The Oracle scripts will be created and executed in this order:
 08_test_queries.sql
 ```
 
-Use Oracle syntax only. Do not use MySQL syntax such as `AUTO_INCREMENT`, `BOOLEAN`, `TEXT`, `ENUM`, or `NOW()`.
+## API Overview
 
-## Current Status
+All application endpoints use the `/api/v1` prefix.
 
-- Laravel API scaffold is ready
-- Oracle Instant Client and OCI8 are configured locally
-- Laravel-OCI8 is installed
-- Real Oracle health endpoint is working
-- `database/oracle` is ready for raw SQL and PL/SQL scripts
+| Area                | Route group                     |
+| ------------------- | ------------------------------- |
+| Database health     | `/health/database`              |
+| Authentication      | `/auth/*`                       |
+| Student profiles    | `/students/*`                   |
+| Academic documents  | `/documents/*`                  |
+| Learning resources  | `/resources/*`                  |
+| Academic tools      | `/tools/*`                      |
+| Templates           | `/templates/*`                  |
+| Research workspaces | `/research-topics/*`            |
+| Reviews             | `/reviews/*`                    |
+| Student dashboard   | `/dashboard/student/{id}`       |
+| Recommendations     | `/recommendations/student/{id}` |
 
-Next phase: create `database/oracle/01_create_tables.sql`.
+The API uses consistent success, validation, authentication, not-found, conflict, and Oracle business-error responses.
+
+## Local Setup
+
+Install dependencies and create the environment file:
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+
+Configure the Oracle connection in `.env`:
+
+```env
+DB_CONNECTION=oracle
+DB_TNS=educonnectdb_low
+DB_USERNAME=educonnect
+DB_PASSWORD=your-local-oracle-password
+DB_CHARSET=AL32UTF8
+DB_SERVER_VERSION=19c
+ORA_MAX_NAME_LEN=128
+TNS_ADMIN=/absolute/path/to/external/oracle/wallet
+```
+
+Clear cached configuration after changing `.env`:
+
+```bash
+php artisan optimize:clear
+```
+
+Run the API:
+
+```bash
+php artisan serve
+```
+
+The default address is `http://127.0.0.1:8000`.
+
+## Oracle Wallet Safety
+
+Keep the Oracle wallet outside this repository. Never commit `.env`, wallet ZIP files, `cwallet.sso`, `ewallet.p12`, `tnsnames.ora`, passwords, or cloud credentials.
+
+## Verification
+
+```bash
+curl -s http://127.0.0.1:8000/api/v1/health/database
+php artisan route:list --path=api/v1
+php artisan test
+./vendor/bin/pint --test
+composer validate --strict
+composer check-platform-reqs
+```
+
+API workflows can be tested with Postman or Insomnia using:
+
+```text
+http://127.0.0.1:8000/api/v1
+```
+
+## Future Direction
+
+The backend is prepared for a future Next.js frontend, production token authentication, cloud document storage, real AI document understanding, real payments, creator analytics, mentor features, notifications, and mobile clients.

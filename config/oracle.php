@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'tns_admin' => env('TNS_ADMIN', ''),
+
     'oracle' => [
         'driver' => 'oracle',
         'tns' => env('DB_TNS', ''),
@@ -14,14 +16,14 @@ return [
         'prefix' => env('DB_PREFIX', ''),
         'prefix_schema' => env('DB_SCHEMA_PREFIX', ''),
         'edition' => env('DB_EDITION', 'ora$base'),
-        'server_version' => env('DB_SERVER_VERSION', '11g'),
+        'server_version' => env('DB_SERVER_VERSION', '19c'),
         'load_balance' => env('DB_LOAD_BALANCE', 'yes'),
         'connect_timeout' => env('DB_CONNECT_TIMEOUT', ''),
         'retry_count' => env('DB_RETRY_COUNT', '3'), // 12c and above only
         'retry_delay' => env('DB_RETRY_DELAY', '1'), // 12c and above only
         'transport_connect_timeout' => env('DB_TRANSPORT_CONNECT_TIMEOUT', '60'), // 12c and above only
         'expire_time' => env('DB_EXPIRE_TIME', '0'), // 19c and above only
-        'max_name_len' => env('ORA_MAX_NAME_LEN', 30),
+        'max_name_len' => env('ORA_MAX_NAME_LEN', 128),
         'dynamic' => [],
         'sessionVars' => [
             'NLS_TIME_FORMAT' => 'HH24:MI:SS',

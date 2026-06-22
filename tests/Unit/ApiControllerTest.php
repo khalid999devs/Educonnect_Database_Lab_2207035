@@ -41,6 +41,21 @@ class ApiControllerTest extends TestCase
         $this->assertSame('Student does not exist.', $response->getData(true)['message']);
     }
 
+    public function test_technical_oracle_errors_are_returned_as_sanitized_server_errors(): void
+    {
+        $controller = $this->controllerHarness();
+        $response = $controller->execute(function (): void {
+            throw new RuntimeException('ORA-12154: private connection details');
+        });
+
+        $this->assertSame(500, $response->getStatusCode());
+        $this->assertSame([
+            'success' => false,
+            'message' => 'Oracle database operation failed',
+            'errors' => [],
+        ], $response->getData(true));
+    }
+
     public function test_dashboard_controller_delegates_to_dashboard_service(): void
     {
         $service = Mockery::mock(DashboardService::class);

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 class RecommendationService
 {
     /**
-     * @return Collection<int, resource>
+     * @return Collection<int, \App\Models\Resource>
      */
     public function getForStudent(int $studentId, int $limit = 10): Collection
     {

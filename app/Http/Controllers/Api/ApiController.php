@@ -14,19 +14,25 @@ abstract class ApiController extends Controller
         try {
             return ApiResponse::success($message, $operation(), $status);
         } catch (Throwable $exception) {
-            $oracleMessage = $this->oracleMessage($exception);
+            $oracleMessage = $this->oracleBusinessMessage($exception);
+
+            if ($oracleMessage === null) {
+                report($exception);
+
+                return ApiResponse::error('Oracle database operation failed', null, 500);
+            }
 
             return ApiResponse::error(
-                $oracleMessage ?? 'Oracle database operation failed',
+                $oracleMessage,
                 null,
                 $this->isConflict($exception) ? 409 : 422,
             );
         }
     }
 
-    private function oracleMessage(Throwable $exception): ?string
+    private function oracleBusinessMessage(Throwable $exception): ?string
     {
-        if (preg_match('/ORA-\d+:\s*([^\r\n]+)/', $exception->getMessage(), $matches) !== 1) {
+        if (preg_match('/ORA-20\d{3}:\s*([^\r\n]+)/', $exception->getMessage(), $matches) !== 1) {
             return null;
         }
 
