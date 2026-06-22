@@ -6,7 +6,7 @@ EduConnect is a Database Lab MVP for organizing student academic profiles, docum
 
 ## Project Scope
 
-The current repository contains the backend and database layer only.
+The current repository contains the Oracle-backed API and a lightweight Laravel Blade demo interface.
 
 Implemented features:
 
@@ -21,6 +21,7 @@ Implemented features:
 - Student dashboard and personalized recommendations
 - Administrator approval and audit records
 - Oracle views, functions, procedures, triggers, and cursor reports
+- Responsive Blade interface foundation with a reusable design system
 
 ## Technology
 
@@ -30,6 +31,7 @@ Implemented features:
 - Oracle Instant Client and PHP OCI8
 - Laravel-OCI8
 - Raw Oracle SQL and PL/SQL
+- Laravel Blade, plain CSS, and vanilla JavaScript
 - PHPUnit and Laravel Pint
 
 ## Project Structure
@@ -43,7 +45,10 @@ app/Support/                JSON response formatting
 config/oracle.php           Oracle connection configuration
 database/oracle/            Raw SQL, PL/SQL, seed, and test scripts
 docs/                       Detailed project documentation
+resources/views/            Blade layouts, pages, and UI components
+public/assets/              Frontend styles, scripts, and local imagery
 routes/api.php              Versioned REST routes
+routes/web.php              Demo frontend routes
 tests/                      Unit and feature tests
 ```
 
