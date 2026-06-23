@@ -12,6 +12,9 @@ Implemented features:
 
 - User registration and session login
 - Browser-based sign-up, sign-in, protected workspace, and sign-out flow
+- Academic profile onboarding with university, field, level, and goal selection
+- Oracle-backed dashboard with profile completion, activity totals, and recommendations
+- Searchable resource, tool, and template catalogs with filters, details, and save actions
 - Student onboarding and academic preferences
 - Academic document metadata and simulated extracted facts
 - Resource, tool, and template catalogues
@@ -101,7 +104,7 @@ All application endpoints use the `/api/v1` prefix.
 
 The API uses consistent success, validation, authentication, not-found, conflict, and Oracle business-error responses.
 
-The Blade demo interface starts at `/login`, supports student registration at `/register`, and protects the signed-in workspace at `/app` with Laravel sessions.
+The Blade interface starts at `/login`, supports student registration at `/register`, guides new accounts through `/app/onboarding`, and serves the signed-in dashboard at `/app` with Laravel sessions. Discovery pages are available under `/app/resources`, `/app/tools`, and `/app/templates`.
 
 ## Local Setup
 

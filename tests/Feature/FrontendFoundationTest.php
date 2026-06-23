@@ -40,8 +40,16 @@ class FrontendFoundationTest extends TestCase
     {
         $this->assertFileExists(public_path('assets/css/tokens.css'));
         $this->assertFileExists(public_path('assets/css/auth.css'));
+        $this->assertFileExists(public_path('assets/css/catalog.css'));
+        $this->assertFileExists(public_path('assets/css/onboarding.css'));
+        $this->assertFileExists(public_path('assets/css/workspace.css'));
         $this->assertFileExists(public_path('assets/js/core/api-client.js'));
         $this->assertFileExists(public_path('assets/js/features/auth.js'));
+        $this->assertFileExists(public_path('assets/js/features/catalog.js'));
+        $this->assertFileExists(public_path('assets/js/features/catalog-config.js'));
+        $this->assertFileExists(public_path('assets/js/features/catalog-renderer.js'));
+        $this->assertFileExists(public_path('assets/js/features/dashboard.js'));
+        $this->assertFileExists(public_path('assets/js/features/onboarding.js'));
         $this->assertFileExists(public_path('assets/images/auth-workspace.png'));
     }
 }

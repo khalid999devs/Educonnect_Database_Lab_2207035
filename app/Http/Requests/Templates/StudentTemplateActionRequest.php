@@ -10,7 +10,7 @@ class StudentTemplateActionRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'student_id' => ['required', 'integer', Rule::exists('students', 'id')],
+            'student_id' => [$this->user() ? 'nullable' : 'required', 'integer', Rule::exists('students', 'id')],
         ];
     }
 }

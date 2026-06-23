@@ -54,6 +54,37 @@ class ApiRouteRegistrationTest extends TestCase
             ]);
     }
 
+    public function test_student_onboarding_uses_authenticated_session_middleware(): void
+    {
+        $route = Route::getRoutes()->getByName('api.v1.students.onboarding');
+
+        $this->assertContains(EncryptCookies::class, $route->gatherMiddleware());
+        $this->assertContains(AddQueuedCookiesToResponse::class, $route->gatherMiddleware());
+        $this->assertContains(StartSession::class, $route->gatherMiddleware());
+        $this->assertContains('auth', $route->gatherMiddleware());
+
+        $this->postJson('/api/v1/students/onboarding', [])->assertUnauthorized();
+    }
+
+    public function test_student_catalog_actions_use_authenticated_session_middleware(): void
+    {
+        $routeNames = [
+            'api.v1.resources.save',
+            'api.v1.templates.save',
+            'api.v1.templates.purchase',
+        ];
+
+        foreach ($routeNames as $routeName) {
+            $middleware = Route::getRoutes()->getByName($routeName)->gatherMiddleware();
+            $this->assertContains(EncryptCookies::class, $middleware);
+            $this->assertContains(AddQueuedCookiesToResponse::class, $middleware);
+            $this->assertContains(StartSession::class, $middleware);
+            $this->assertContains('auth', $middleware);
+        }
+
+        $this->postJson('/api/v1/resources/1/save', [])->assertUnauthorized();
+    }
+
     /**
      * @return array<string, string>
      */

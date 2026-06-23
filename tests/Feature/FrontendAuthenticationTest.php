@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
@@ -37,12 +38,16 @@ class FrontendAuthenticationTest extends TestCase
         ]);
         $user->id = 7;
         $user->exists = true;
+        $student = new Student;
+        $student->id = 3;
+        $student->exists = true;
+        $user->setRelation('student', $student);
 
         $this->actingAs($user)
             ->get('/app')
             ->assertOk()
-            ->assertSee('Welcome, Ada')
-            ->assertSee('ada@example.com')
+            ->assertSee('Welcome back, Ada')
+            ->assertSee('data-student-id="3"', false)
             ->assertSee('data-logout-button', false);
     }
 
@@ -61,6 +66,7 @@ class FrontendAuthenticationTest extends TestCase
         $this->assertContains('guest', Route::getRoutes()->getByName('login')->gatherMiddleware());
         $this->assertContains('guest', Route::getRoutes()->getByName('register')->gatherMiddleware());
         $this->assertContains('auth', Route::getRoutes()->getByName('workspace')->gatherMiddleware());
+        $this->assertContains('auth', Route::getRoutes()->getByName('onboarding')->gatherMiddleware());
     }
 
     public function test_api_logout_invalidates_the_authenticated_session(): void

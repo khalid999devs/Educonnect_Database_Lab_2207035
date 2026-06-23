@@ -20,17 +20,19 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->name('api.v1.')->group(function () {
+$sessionMiddleware = [
+    EncryptCookies::class,
+    AddQueuedCookiesToResponse::class,
+    StartSession::class,
+];
+
+Route::prefix('v1')->name('api.v1.')->group(function () use ($sessionMiddleware) {
     Route::get('/health/database', DatabaseHealthController::class)->name('health.database');
     Route::get('/reference-data', ReferenceDataController::class)->name('reference-data');
 
     Route::prefix('auth')
         ->name('auth.')
-        ->middleware([
-            EncryptCookies::class,
-            AddQueuedCookiesToResponse::class,
-            StartSession::class,
-        ])
+        ->middleware($sessionMiddleware)
         ->controller(AuthController::class)
         ->group(function () {
             Route::post('/register', 'register')->name('register');
@@ -42,8 +44,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             });
         });
 
-    Route::prefix('students')->name('students.')->controller(StudentOnboardingController::class)->group(function () {
-        Route::post('/onboarding', 'store')->name('onboarding');
+    Route::prefix('students')->name('students.')->controller(StudentOnboardingController::class)->group(function () use ($sessionMiddleware) {
+        Route::post('/onboarding', 'store')
+            ->middleware([...$sessionMiddleware, 'auth'])
+            ->name('onboarding');
         Route::get('/{id}', 'show')->name('show');
         Route::put('/{id}', 'update')->name('update');
     });
@@ -57,7 +61,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::post('/{id}/extracted-data', 'addExtractedData')->name('extracted-data.store');
     });
 
-    Route::prefix('resources')->name('resources.')->group(function () {
+    Route::prefix('resources')->name('resources.')->group(function () use ($sessionMiddleware) {
         Route::controller(ResourceController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
@@ -66,7 +70,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::delete('/{id}', 'destroy')->name('destroy');
         });
 
-        Route::post('/{id}/save', [SavedResourceController::class, 'store'])->name('save');
+        Route::post('/{id}/save', [SavedResourceController::class, 'store'])
+            ->middleware([...$sessionMiddleware, 'auth'])
+            ->name('save');
         Route::post('/{id}/approve', [AdminController::class, 'approveResource'])->name('approve');
     });
 
@@ -78,7 +84,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::delete('/{id}', 'destroy')->name('destroy');
     });
 
-    Route::prefix('templates')->name('templates.')->group(function () {
+    Route::prefix('templates')->name('templates.')->group(function () use ($sessionMiddleware) {
         Route::controller(TemplateController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
@@ -87,8 +93,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             Route::delete('/{id}', 'destroy')->name('destroy');
         });
 
-        Route::post('/{id}/save', [SavedTemplateController::class, 'store'])->name('save');
-        Route::post('/{id}/purchase', [SavedTemplateController::class, 'purchase'])->name('purchase');
+        Route::post('/{id}/save', [SavedTemplateController::class, 'store'])
+            ->middleware([...$sessionMiddleware, 'auth'])
+            ->name('save');
+        Route::post('/{id}/purchase', [SavedTemplateController::class, 'purchase'])
+            ->middleware([...$sessionMiddleware, 'auth'])
+            ->name('purchase');
         Route::post('/{id}/approve', [AdminController::class, 'approveTemplate'])->name('approve');
     });
 

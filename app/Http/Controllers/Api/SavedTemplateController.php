@@ -6,6 +6,8 @@ use App\Http\Requests\Templates\StudentTemplateActionRequest;
 use App\Models\SavedTemplate;
 use App\Models\TemplatePurchase;
 use App\Services\OracleProcedureService;
+use App\Services\StudentContextService;
+use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 class SavedTemplateController extends ApiController
@@ -14,8 +16,15 @@ class SavedTemplateController extends ApiController
         StudentTemplateActionRequest $request,
         int $id,
         OracleProcedureService $oracleProcedures,
+        StudentContextService $studentContext,
     ): JsonResponse {
-        $studentId = (int) $request->validated('student_id');
+        $student = $studentContext->forUser($request->user());
+
+        if (! $student) {
+            return ApiResponse::error('Student profile is required', null, 422);
+        }
+
+        $studentId = (int) $student->id;
 
         return $this->runOracleOperation(function () use ($studentId, $id, $oracleProcedures): SavedTemplate {
             $oracleProcedures->saveTemplate($studentId, $id);
@@ -32,8 +41,15 @@ class SavedTemplateController extends ApiController
         StudentTemplateActionRequest $request,
         int $id,
         OracleProcedureService $oracleProcedures,
+        StudentContextService $studentContext,
     ): JsonResponse {
-        $studentId = (int) $request->validated('student_id');
+        $student = $studentContext->forUser($request->user());
+
+        if (! $student) {
+            return ApiResponse::error('Student profile is required', null, 422);
+        }
+
+        $studentId = (int) $student->id;
 
         return $this->runOracleOperation(function () use ($studentId, $id, $oracleProcedures): TemplatePurchase {
             $oracleProcedures->purchaseTemplate($studentId, $id);

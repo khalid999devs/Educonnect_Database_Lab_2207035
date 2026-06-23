@@ -1,5 +1,8 @@
 import { apiClient } from './core/api-client.js';
 import { setupAuthentication } from './features/auth.js';
+import { setupCatalog } from './features/catalog.js';
+import { setupDashboard } from './features/dashboard.js';
+import { setupOnboarding } from './features/onboarding.js';
 
 function setupSidebar() {
     const shell = document.querySelector('[data-app-shell]');
@@ -40,6 +43,9 @@ function initialize() {
     setupSidebar();
     setupDismissibleAlerts();
     setupAuthentication();
+    setupOnboarding();
+    setupDashboard();
+    setupCatalog();
 }
 
 window.Educonnect = Object.freeze({ api: apiClient });

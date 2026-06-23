@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Resources\StudentResourceActionRequest;
 use App\Models\SavedResource;
 use App\Services\OracleProcedureService;
+use App\Services\StudentContextService;
+use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 class SavedResourceController extends ApiController
@@ -13,8 +15,15 @@ class SavedResourceController extends ApiController
         StudentResourceActionRequest $request,
         int $id,
         OracleProcedureService $oracleProcedures,
+        StudentContextService $studentContext,
     ): JsonResponse {
-        $studentId = (int) $request->validated('student_id');
+        $student = $studentContext->forUser($request->user());
+
+        if (! $student) {
+            return ApiResponse::error('Student profile is required', null, 422);
+        }
+
+        $studentId = (int) $student->id;
 
         return $this->runOracleOperation(function () use ($studentId, $id, $oracleProcedures): SavedResource {
             $oracleProcedures->saveResource($studentId, $id);
